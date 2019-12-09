@@ -18,4 +18,5 @@ for link in audio_list_soup.find_all(href=re.compile('weixin')):
     audio_file = requests.get(audio_url).content
     # 手动创建“音频”文件夹
     open('./音频/' + audio_name, 'wb').write(audio_file)
+    print(audio_name + ' 下载成功')
     time.sleep(10)
