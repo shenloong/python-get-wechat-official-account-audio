@@ -1,0 +1,21 @@
+from bs4 import BeautifulSoup
+import requests
+import time
+import re
+
+
+# 微信公众号音频列表页链接
+audio_list_url = 'https://mp.weixin.qq.com/s/8ll0a0tphPbn67idAqMJ9A'
+audio_list_response = requests.get(audio_list_url)
+audio_list_soup = BeautifulSoup(audio_list_response.text, 'html.parser')
+
+for link in audio_list_soup.find_all(href=re.compile('weixin')):
+    audio_page_url = link.get('href')
+    audio_response = requests.get(audio_page_url)
+    audio_soup = BeautifulSoup(audio_response.text, 'html.parser')
+    audio_name = audio_soup.mpvoice['name'] + '.mp3'
+    audio_url = 'https://res.wx.qq.com/voice/getvoice?mediaid=' + audio_soup.mpvoice['voice_encode_fileid']
+    audio_file = requests.get(audio_url).content
+    # 手动创建“音频”文件夹
+    open('./音频/' + audio_name, 'wb').write(audio_file)
+    time.sleep(10)
